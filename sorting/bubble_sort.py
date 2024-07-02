@@ -4,7 +4,7 @@ def bubbleSort(arr: List[int], n: int):
     # adjacent swap to place the largest number at it's correct position i.e in the end
     for i in range(n-1):
         swapped = False
-        for j in range(n-1-i):
+        for j in range(n-1-i): # because the largest elemenet will reach to its correct position in the end
             if arr[j] > arr[j+1]:
                 # swap
                 temp = arr[j]
