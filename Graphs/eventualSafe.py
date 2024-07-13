@@ -1,0 +1,43 @@
+# Problem Link:- https://leetcode.com/problems/find-eventual-safe-states/description/
+
+# Crux: If a node is part of the cycle don't mark it 1 in Safe array and return. 
+
+from Graph import Graph
+from typing import List
+
+
+
+def checkSafeNodesDFS(node, visited, path, safe, adj):
+    visited[node] = 1
+    path[node] = 1
+    safe[node] = 0 # For every path0 we will initialize safe[node] as 0, considering we don't know as that if there's a cycle ahead in this path or not
+    for neighbor in adj[node]:
+        if visited[neighbor] == 0:
+            if checkSafeNodesDFS(neighbor, visited, path, safe, adj) == True:
+                return True
+        elif path[neighbor] == 1:
+            return True
+    path[node] = 0
+    safe[node] = 1 # if for a node we managed to reach here it means that till this node there was no cycle ahead of it specifically in this path so we marked it as 1 in the safe array
+    return False
+def eventualSafeNodes(graph: List[List[int]]) -> List[int]:
+    n = len(graph)
+    visited = [0]*n
+    path = [0]*n
+    safe = [0]*n
+    ans_safe_nodes = []
+    for i in range(n):
+        if visited[i] == 0:
+            checkSafeNodesDFS(i, visited, path, safe, adj)
+    for i in range(n):
+        if safe[i] == 1:
+            ans_safe_nodes.append(i)
+    # ans_safe_nodes.sort()
+    return ans_safe_nodes
+
+g = Graph()
+V, adj = g.directedListInput()
+print(eventualSafeNodes(adj))
+
+
+

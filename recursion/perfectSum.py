@@ -1,4 +1,6 @@
-# link:- 
+# link:- https://www.geeksforgeeks.org/problems/perfect-sum-problem5633/1?utm_source=youtube&utm_medium=collab_striver_ytdescription&utm_campaign=perfect-sum-problem
+
+# approach-1: Take and Not Take Approach | Time Complexity:- O(2^n)
 def helper(arr, n, sum, curr_sum, count, idx):
     if idx>=n:
          if curr_sum == sum:

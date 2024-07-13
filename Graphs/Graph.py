@@ -1,62 +1,49 @@
-import queue
 class Graph:
-    def __init__(self, nVertices):
-        self.nVertices = nVertices
-        self.adjMatrix = [[0 for i in range(nVertices)] for j in range(nVertices)]
+    def __init__(self):
+        pass
+
+    def undirectedMatrixInput(self):
+        nVertices, nEdges = map(int, input().split())
+        adjMatrix = [[0 for i in range(nVertices)] for j in range(nVertices)]
+        for i in range(nEdges):
+            v1, v2 = map(int, input().split())
+            adjMatrix[v1][v2] = 1
+            adjMatrix[v2][v1] = 1
+        return (nVertices, adjMatrix)
     
-    def addEdge(self, v1, v2):
-        if v1<0 or v1 > self.nVertices or v2<0 or v2 > self.nVertices:
-            return "Invalid vertices"
-        self.adjMatrix[v1][v2] = 1
-        self.adjMatrix[v2][v1] = 1
-
-    def removeEdge(self, v1, v2):
-        if self.containsEdge(v1, v2):
-            self.adjMatrix[v1][v2] == 0
-            self.adjMatrix[v2][v1] == 0
-        else:
-            return "No edge found"
-
-    def containsEdge(self, v1, v2):
-        return self.adjMatrix[v1][v2] == 1
+    def directedMatrixInput(self):
+        nVertices, nEdges = map(int, input().split())
+        adjMatrix = [[0 for i in range(nVertices)] for j in range(nVertices)]
+        for i in range(nEdges):
+            v1, v2 = map(int, input().split())
+            adjMatrix[v1][v2] = 1
+        return (nVertices, adjMatrix)
     
-
-    def __dfsHelper(self, sv, visited):
-        print(sv)
-        visited[sv] = True
-        for i in range(self.nVertices):
-            if self.adjMatrix[sv][i] > 0 and visited[i] == False:
-                self.__dfsHelper(i, visited)
-
-    def dfs(self, sv):
-        visited = [False for i in range(self.nVertices)]
-        self.__dfsHelper(sv, visited)
+    def undirectedListInput(self):
+        nVertices, nEdges = map(int, input().split())
+        adjList = [[] for i in range(nVertices)]
+        for i in range(nEdges):
+            v1, v2 = map(int, input().split())
+            adjList[v1].append(v2)
+            adjList[v2].append(v1)
+        return (nVertices, adjList)
     
-    def bfs(self, sv):
-        q = queue.Queue()
-        q.put(sv)
-        visited = [False for i in range(self.nVertices)]
-        visited[sv] = True
-        while(q):
-            front = q.get()
-            print(front)
-            for i in range(self.nVertices):
-                if self.adjMatrix[front][i] > 0 and visited[i] == False:
-                    q.put(i)
-                    visited[i] = True
+    def directedListInput(self):
+        nVertices, nEdges = map(int, input().split())
+        adjList = [[] for i in range(nVertices)]
+        for i in range(nEdges):
+            v1, v2 = map(int, input().split())
+            adjList[v1].append(v2)
+        return (nVertices, adjList)
 
-    def __str__(self):
-        return str(self.adjMatrix)
 
-g = Graph(5)
-g.addEdge(0,1)
-g.addEdge(0,2)
-g.addEdge(2,4)
-g.addEdge(4,1)
-g.addEdge(4,3)
-g.dfs(2)
-print("-----------------")
-g.bfs(2)
-
-print(g)
-
+if __name__ == '__main__':
+    g = Graph()
+    graph = g.undirectedMatrixInput()
+    print(graph, end="\n\n")
+    graph2 = g.directedMatrixInput()
+    print(graph2, end="\n\n")
+    graph3 = g.undirectedListInput()
+    print(graph3, end="\n\n")
+    graph4 = g.directedListInput()
+    print(graph4, end="\n\n")
