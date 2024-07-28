@@ -4,8 +4,9 @@
 
 from Graph import Graph
 from typing import List
+from collections import deque
 
-
+# ---------DFS Cycle Detection Method -------------------
 
 def checkSafeNodesDFS(node, visited, path, safe, adj):
     visited[node] = 1
@@ -20,7 +21,7 @@ def checkSafeNodesDFS(node, visited, path, safe, adj):
     path[node] = 0
     safe[node] = 1 # if for a node we managed to reach here it means that till this node there was no cycle ahead of it specifically in this path so we marked it as 1 in the safe array
     return False
-def eventualSafeNodes(graph: List[List[int]]) -> List[int]:
+def eventualSafeNodes_DFS(graph: List[List[int]]) -> List[int]:
     n = len(graph)
     visited = [0]*n
     path = [0]*n
@@ -32,12 +33,44 @@ def eventualSafeNodes(graph: List[List[int]]) -> List[int]:
     for i in range(n):
         if safe[i] == 1:
             ans_safe_nodes.append(i)
-    # ans_safe_nodes.sort()
     return ans_safe_nodes
 
+# ---------BFS [Topo Sort Method] : Above DFS approach is more optimal--------------------
+def eventualSafeNodes_BFS(graph: List[List[int]]) -> List[int]:
+    vertices = len(graph)
+    adjRev = [[] for _ in range(vertices)]
+    for v in range(vertices):
+        for neighbor in graph[v]:
+            adjRev[neighbor].append(v)
+    
+    indegree = [0]*vertices
+    for v in range(vertices):
+        for neighbor in adjRev[v]:
+            indegree[neighbor]+=1
+
+    q = deque()
+    safeNodes = []
+    
+    for i in range(vertices):
+        if indegree[i] == 0:
+            q.append(i)
+    
+    while len(q)!= 0:
+        front = q.popleft()
+        safeNodes.append(front)
+        for neighbor in adjRev[front]:
+            indegree[neighbor]-=1
+            if indegree[neighbor] == 0:
+                q.append(neighbor)
+    
+    safeNodes.sort()
+    return safeNodes
+
+    
 g = Graph()
 V, adj = g.directedListInput()
-print(eventualSafeNodes(adj))
+print(eventualSafeNodes_BFS(adj)) # One way using topo sort, not optimal in compariosn to DFS approach
+print(eventualSafeNodes_DFS(adj)) # more optima Optimal
 
 
 
