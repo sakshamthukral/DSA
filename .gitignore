@@ -1,1 +1,3 @@
 /CN-Notes
+**/__pycache__/
+*.pyc

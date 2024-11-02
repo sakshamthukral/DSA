@@ -35,7 +35,15 @@ class Graph:
             v1, v2 = map(int, input().split())
             adjList[v1].append(v2)
         return (nVertices, adjList)
-
+    
+    def weightedUndirectedListInput(self):
+        nVertices, nEdges = map(int, input().split())
+        adjList = [[] for i in range(nVertices)]
+        for _ in range(nEdges):
+            v1, v2, weight = map(int, input().split())
+            adjList[v1].append((v2, weight))
+            adjList[v2].append((v1, weight))
+        return (nVertices, adjList)
 
 if __name__ == '__main__':
     g = Graph()
