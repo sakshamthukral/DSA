@@ -1,87 +1,79 @@
 from typing import List
-
-# Brute Force-1
-# def setZeroes1(matrix: List[List[int]])->None:
-#     rows_to_zero = []
-#     columns_to_zero = []
-#     for i in range(len(matrix)):
-#         for j in range(len(matrix[i])):
-#             ele = matrix[i][j]
-#             if(ele == 0):
-#                 rows_to_zero.append(i)
-#                 columns_to_zero.append(j)
-    
-#     for row in rows_to_zero:
-#         for col in range(len(matrix[0])):
-#             matrix[row][col] = 0
-#     for col in columns_to_zero:
-#         for row in range(len(matrix)):
-#             matrix[row][col] = 0
- 
-def setZeroes(matrix: List[List[int]]) -> None:
-        """
-        Do not return anything, modify matrix in-place instead.
-        """
-        for i in range(len(matrix)): # Iterating over rows
-            for j in range(len(matrix[0])): # iterating over the columns
-                if matrix[i][j] == 0:
-                    for k in range(len(matrix)): # converting all the elements in that column to -1
-                        if matrix[k][j] != 0:
-                            matrix[k][j] = -1
-                    for l in range(len(matrix[0])):
-                        if matrix[i][l] != 0:
-                            matrix[i][l] = -1
-        for i in range(len(matrix)):
-            for j in range(len(matrix[0])):
-                print(matrix[i][j],end=" ")
-            print()
-        
-        for i in range(len(matrix)):
-            for j in range(len(matrix[0])):
-                if matrix[i][j] == -1:
-                    matrix[i][j] = 0                
-
-# BruteForce-2
-# def setZeroes2(matrix: List[List[int]])->None:
-#     col0 = 1
-#     rows = len(matrix)
-#     columns = len(matrix[0])
-#     for i in range(rows):
-#         if(matrix[i][0] == 0):
-#             col0=0
-#         for j in range(1,columns):
-#             if(matrix[i][j] == 0):
-#                 matrix[0][j] = matrix[i][0] = 0
-#     for i in range(rows-1,-1,-1):
-#         for j in range(columns-1,0,-1):
-#             if(matrix[i][0] == 0 or matrix[0][j] == 0):
-#                 matrix[i][j] = 0
-#         if col0 == 0:
-#             matrix[i][0] = 0
-
-# Approach-2
-def set_zeros_2(matrix:List[List[int]])->None:
-    flag = 1 # tracks if there's any 0 in first column of the matrix
-    for i in range(len(matrix)):
-        if matrix[i][0] == 0:
-            flag = 0
-        for j in range(1, len(matrix[0])):
+def setZeroes1(matrix: List[List[int]]):
+    rows = len(matrix)
+    cols = len(matrix[0])
+    # traverse over the matric and change -1 to 0 in tracking matrix wherever we find a 0 value
+    tracking_matrix = [[-1 for j in range(cols)] for i in range(rows)]
+    for i in range(rows):
+        for j in range(cols):
             if matrix[i][j] == 0:
-                matrix[i][0] = matrix[0][j] = 0
-
-    for i in range(len(matrix)-1, -1, -1):
-        for j in range(len(matrix[0])-1, 0, -1):
-            if matrix[i][0] == 0 or matrix[0][j] == 0: # not and, or will because either element ies in row or in the column containing 1 0 somewhere
-                matrix[i][j] = 0
-        if flag == 0:
-            matrix[i][0]=0
+                tracking_matrix[i][j] = 0
     
+    for i in range(rows):
+        for j in range(cols):
+            if tracking_matrix[i][j] == 0:
+                for k in range(rows):
+                    matrix[k][j] = 0
+                for l in range(cols):
+                    matrix[i][l] = 0
+    return matrix
+# Time Complexity: O(M.N.(M+N)) # M-> Number of rows, N-> number of cols, Worst case (all m·n cells are zero), thats why multiple M.N with (M+N) too.
+# Space Complexity: O(MxN)
 
-def print_mat(matrix: List[List[int]])->None:
-    for i in range(len(matrix)):
-        print(matrix[i])
+def setZeroes2(matrix: List[List[int]]):
+    rows = len(matrix)
+    cols = len(matrix[0])
+    zero_indices = []
+    for i in range(rows):
+        for j in range(cols):
+            if matrix[i][j] == 0:
+                zero_indices.append([i, j])
+    
+    for k in range(len(zero_indices)):
+        index = zero_indices[k]
+        row=index[0]
+        col=index[1]
+        for i in range(rows):
+            matrix[i][col] = 0
+        for j in range(cols):
+            matrix[row][j] = 0
+    return matrix
+# Time Complexity: O(M.N.(M+N)) # M-> Number of rows, N-> number of cols, Worst case (all m·n cells are zero), thats why multiple M.N with (M+N) too.
+# Space Complexity: O(K) , where K is the number of zeroes and in worst case K=M.N i.e. all zeros
+
+
+def setZeroes3(matrix: List[List[int]]): # Treat the 1st col as the flag column depicting if that whole row should be converted to 0 or not
+    rows = len(matrix)
+    cols = len(matrix[0])
+    flagFirstCol = False 
+
+    # 1: Iterate over the 1st column and check if there's any zero, and update flagFirstCol accordingly
+    for i in range(rows):
+        if matrix[i][0] == 0:
+            flagFirstCol = True
+
+    # 2: Iterate over the matrix leaving 1st column aside and if we get 0, update value in corresponding 0th row and 0th col to 0
+    for i in range(rows):
+        for j in range(1, cols):
+            if matrix[i][j] == 0:
+                matrix[i][0] = 0
+                matrix[0][j] = 0
+    # 3: Iteratate again over the matrix leaving 1st column aside, but in reverse direction, and check condition, if thre's 0 in either it's corresponding 0th row or corresponding 0th column then convert the element to 0 else not
+    for i in range(rows-1, -1, -1):
+        for j in range(cols-1, 0, -1):
+
+            # Condition, check if there's 0 in either it's corresponding 0th row or corresponding 0th column then change the value of the current element to 0
+            if matrix[i][0] == 0 or matrix[0][j] == 0:
+                matrix[i][j] = 0
+    
+    # 4: If the flagFirstCol, is True, that means the 1st column had a 0 in it, so change the whole 1st column to 0 as well
+    if flagFirstCol == True:
+        for i in range(rows):
+            matrix[i][0] = 0
+    return matrix
+# Time Complexity: O(M.N) # M-> Number of rows, N-> number of cols
+# Space Complexity: O(1)
+
 matrix = [[0,1,2,0],[3,4,5,2],[1,3,1,5]]
-# setZeroes1(matrix)
-# setZeroes(matrix)
-set_zeros_2(matrix)
-print_mat(matrix)
+ans = setZeroes3(matrix)
+print(ans)
